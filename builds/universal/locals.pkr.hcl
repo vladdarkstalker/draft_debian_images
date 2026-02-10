@@ -11,11 +11,10 @@ locals {
   http_dir  = path_join(local.build_dir, "http")
 
   # ISO paths
-  distro_iso_dir = path_join(var.iso_dir, var.distro)
-
-  iso_filename = "${var.distro}-${var.version}.iso"
-
-  iso_path = path_join(local.distro_iso_dir, local.iso_filename)
+  iso_dir         = var.iso_dir
+  distro_iso_dir  = path_join(var.iso_dir, var.distro)
+  iso_filename    = "${var.distro}-${var.version}.iso"
+  iso_path        = path_join(local.distro_iso_dir, local.iso_filename)
 
   # Artifacts
   artifacts_dir = var.artifacts_dir
@@ -35,7 +34,7 @@ locals {
 
   _check_iso_dir = can(fileset(local.iso_dir, "*"))
     ? true
-    : error("ISO directory not found: ${local.iso_dir}")
+    : error("ISO directory not found: ${vlocalr.iso_dir}")
 
   _check_distro_iso_dir = can(fileset(local.distro_iso_dir, "*"))
     ? true
@@ -45,6 +44,21 @@ locals {
         join("\n", [for file in sort(fileset(local.iso_dir, "*")) : "  • ${file}"])
       ]))
 
+/* TESTING: Enhanced variant
+  _check_distro_iso_dir = can(fileset(local.distro_iso_dir, "*"))
+    ? true
+    : error(join("\n", [
+        "Unknown distro: ${var.distro}",
+        "Expected directory: ${local.distro_iso_dir}",
+        "",
+        "Available distros:",
+        join("\n", [
+          for d in sort(fileset(local.iso_dir, "*")) :
+          "  • ${d}"
+        ])
+      ]))
+*/
+
   _check_iso_path = fileexists(local.iso_path)
     ? true
     : error(join("\n", [
@@ -52,6 +66,21 @@ locals {
         "Available ISO:",
         join("\n", [for file in sort(fileset(local.distro_iso_dir, "*")) : "  • ${file}"])
       ]))
+
+/* TESTING: Enhanced variant
+  _check_iso_path = fileexists(local.iso_path)
+    ? true
+    : error(join("\n", [
+        "ISO image not found:",
+        "  ${local.iso_path}",
+        "",
+        "Available ISO files for distro '${var.distro}':",
+        join("\n", [
+          for f in sort(fileset(local.distro_iso_dir, "*.iso")) :
+          "  • ${f}"
+        ])
+      ]))
+*/
 
   _check_artifacts_dir = can(fileset(local.artifacts_dir, "*"))
     ? true

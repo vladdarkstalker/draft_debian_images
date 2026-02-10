@@ -17,7 +17,7 @@ variable "distro" {
   description = "Linux distribution (e.g. alse, debian)"
 
   validation {
-    condition     = var.distro != ""
+    condition     = contains(["alse", "debian", "ubuntu"], var.distro)
     error_message = "distro must be set (e.g. -var distro=alse)"
   }
 }
@@ -40,6 +40,13 @@ variable "version" {
     condition     = var.version != ""
     error_message = "version must be set (e.g. -var version=1.8.1)"
   }
+
+/* TESTING: Need to improve this option
+  validation {
+    condition     = can(regex("^[0-9]+(\\.[0-9]+)*$", var.version))
+    error_message = "version must be numeric, e.g. 181 or 1.8.1"
+  }
+*/
 }
 
 # Directories
@@ -63,6 +70,22 @@ variable "artifacts_dir" {
   validation {
     condition     = var.artifacts_dir != ""
     error_message = "artifacts_dir must be set or provided via PACKER_ARTIFACTS_DIR"
+  }
+}
+
+# Disk size in GB
+
+variable disk_size {
+  type        = number
+  description = "Disk size in GB"
+
+  validation {
+    condition = (
+      can(tonumber(var.disk_size_gb)) &&
+      tonumber(var.disk_size_gb) >= 20 &&
+      tonumber(var.disk_size_gb) <= 500
+    )
+    error_message = "disk_size_gb must be a number between 20 and 500"
   }
 }
 

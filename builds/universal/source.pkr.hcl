@@ -12,4 +12,3 @@ source "qemu" "alse18_base" {
   disk_interface = "virtio"
   boot_wait = "5s"
 }
-
