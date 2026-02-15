@@ -3,7 +3,7 @@ source "qemu" "alse181-universal" {
   vm_name           = "tdhtest"
   iso_url           = local.iso_path
   iso_checksum      = "none"
-  disk_size         = var.disk_size
+  disk_size         = var.disk_size * 1024
   format            = "qcow2"
   accelerator       = "kvm"
   output_directory  = local.artifacts_dir
