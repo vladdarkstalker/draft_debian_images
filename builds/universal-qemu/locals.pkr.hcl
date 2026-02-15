@@ -1,11 +1,11 @@
 /*
         QUICK LOCAL'S REVIEW
 
-project_root     Project root directory
-http_dir         Path for provisioning
-build_dir        Build target (e.g. astra-arm, debian-srv)
-iso_path         Full path to iso distro
-artifacts_dir    Artifacts output directory
+project_root   Project root directory
+http_dir       Path for provisioning
+build_dir      Build target (e.g. astra-arm, debian-srv)
+iso_path       Full path to iso distro
+artifacts_dir  Artifacts output directory
 
 */
 

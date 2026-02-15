@@ -1,15 +1,15 @@
 /*
         QUICK VAR's REVIEW
 
-project_root     Project root directory
-distro           Linux distribution (e.g. alse, debian)
-build            Build target (e.g. astra-arm, debian-srv)
-version          Distribution version (e.g. 1.8.1)
-iso_dir          Base ISO directory
-artifacts_dir    Artifacts output directory
-disk_size        Disk size in GB
-ssh_login        SSH login for provisioning
-ssh_password     SSH password for provisioning
+project_root   Project root directory
+distro         Linux distribution (e.g. alse, debian)
+build          Build target (e.g. astra-arm, debian-srv)
+version        Distribution version (e.g. 1.8.1)
+iso_dir        Base ISO directory
+artifacts_dir  Artifacts output directory
+disk_size      Disk size in GB
+ssh_login      SSH login for provisioning
+ssh_password   SSH password for provisioning
 
 */
 
