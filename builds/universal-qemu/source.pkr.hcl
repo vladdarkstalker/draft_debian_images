@@ -7,7 +7,7 @@ source "qemu" "alse181-universal" {
   format            = "qcow2"
   accelerator       = "kvm"
   output_directory  = local.artifacts_dir
-  shutdown_command  = "echo 'packer' | sudo -S shutdown -P now"
+  shutdown_command  = "echo '${var.ssh_password}' | sudo -S shutdown -P now"
   http_directory    = local.http_dir
   ssh_username      = var.ssh_login
   ssh_password      = var.ssh_password
@@ -15,6 +15,9 @@ source "qemu" "alse181-universal" {
   net_device        = "virtio-net"
   disk_interface    = "virtio"
   boot_wait         = "10s"
-  boot_command      = ["<tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg<enter><wait>"]
-
+  boot_command = [
+    "<esc><wait>",
+    "auto url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg ",
+    "<enter>"
+  ]
 }

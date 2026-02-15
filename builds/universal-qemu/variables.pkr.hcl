@@ -21,7 +21,7 @@ variable "project_root" {
 
   validation {
     condition     = var.project_root != ""
-    error_message = "project_root must be set (e.g. -var project_root=/home/packer)"
+    error_message = "The project_root must be set (e.g. -var project_root=/home/packer)!"
   }
 }
 
@@ -33,7 +33,7 @@ variable "distro" {
 
   validation {
     condition     = contains(["alse", "debian", "ubuntu"], var.distro)
-    error_message = "distro must be set (e.g. -var distro=alse)"
+    error_message = "The distro must be set (e.g. -var distro=alse)!"
   }
 }
 
@@ -43,7 +43,7 @@ variable "build" {
 
   validation {
     condition     = var.build != ""
-    error_message = "build must be set (e.g. -var build=astra-arm)"
+    error_message = "The build must be set (e.g. -var build=astra-arm)!"
   }
 }
 
@@ -53,7 +53,7 @@ variable "version" {
 
   validation {
     condition     = var.version != ""
-    error_message = "version must be set (e.g. -var version=1.8.1)"
+    error_message = "The version must be set (e.g. -var version=1.8.1)!"
   }
 
 /* TESTING: Need to improve this option
@@ -73,7 +73,7 @@ variable "iso_dir" {
 
   validation {
     condition     = var.iso_dir != ""
-    error_message = "iso_dir must be set or provided via PACKER_ISO_DIR"
+    error_message = "The iso_dir must be set or provided via PACKER_ISO_DIR!"
   }
 }
 
@@ -84,7 +84,7 @@ variable "artifacts_dir" {
 
   validation {
     condition     = var.artifacts_dir != ""
-    error_message = "artifacts_dir must be set or provided via PACKER_ARTIFACTS_DIR"
+    error_message = "The artifacts_dir must be set or provided via PACKER_ARTIFACTS_DIR!"
   }
 }
 
@@ -95,12 +95,8 @@ variable disk_size {
   description = "Disk size in GB"
 
   validation {
-    condition = (
-      can(tonumber(var.disk_size_gb)) &&
-      tonumber(var.disk_size_gb) >= 20 &&
-      tonumber(var.disk_size_gb) <= 500
-    )
-    error_message = "disk_size_gb must be a number between 20 and 500"
+    condition     = var.disk_size >= 20 && var.disk_size <= 500
+    error_message = "The disk_size must be a number between 20 and 500!"
   }
 }
 
@@ -114,7 +110,7 @@ variable "ssh_login" {
 
   validation {
     condition     = var.ssh_login != ""
-    error_message = "ssh_login must be set"
+    error_message = "The ssh_login must be set!"
   }
 }
 
@@ -126,6 +122,6 @@ variable "ssh_password" {
 
   validation {
     condition     = var.ssh_password != ""
-    error_message = "ssh_password must be set"
+    error_message = "The ssh_password must be set!"
   }
 }

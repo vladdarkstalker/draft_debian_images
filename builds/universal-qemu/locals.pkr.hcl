@@ -15,17 +15,17 @@ locals {
 
   # Root directories
   project_root = var.project_root
-  builds_root  = path_join(var.project_root, "builds")
+  builds_root  = "${var.project_root}/builds"
 
   # Build-specific paths
-  build_dir = path_join(local.builds_root, var.build)
-  http_dir  = path_join(local.build_dir, "http")
+  build_dir = "${local.builds_root}/${var.build}"
+  http_dir  = "${local.build_dir}/http"
 
   # ISO paths
   iso_dir         = var.iso_dir
-  distro_iso_dir  = path_join(var.iso_dir, var.distro)
+  distro_iso_dir  = "${var.iso_dir}/${var.distro}"
   iso_filename    = "${var.distro}-${var.version}.iso"
-  iso_path        = path_join(local.distro_iso_dir, local.iso_filename)
+  iso_path        = "${local.distro_iso_dir}/${local.iso_filename}"
 
   # Artifacts
   artifacts_dir = var.artifacts_dir
@@ -35,25 +35,25 @@ locals {
 
 locals {
 
-  _check_build_dir = can(fileset(local.build_dir, "*"))
+  _check_build_dir = (can(fileset(local.build_dir, "*"))
     ? true
-    : error("Build directory not found: ${local.build_dir}")
+    : error("Build directory not found: ${local.build_dir}"))
 
-  _check_http_dir = can(fileset(local.http_dir, "*"))
+  _check_http_dir = (can(fileset(local.http_dir, "*"))
     ? true
-    : error("HTTP directory not found: ${local.http_dir}")
+    : error("HTTP directory not found: ${local.http_dir}"))
 
-  _check_iso_dir = can(fileset(local.iso_dir, "*"))
+  _check_iso_dir = (can(fileset(local.iso_dir, "*"))
     ? true
-    : error("ISO directory not found: ${vlocalr.iso_dir}")
-
-  _check_distro_iso_dir = can(fileset(local.distro_iso_dir, "*"))
+    : error("ISO directory not found: ${local.iso_dir}")
+)
+  _check_distro_iso_dir = (can(fileset(local.distro_iso_dir, "*"))
     ? true
     : error(join("\n", [
         "ISO distro directory not found: ${local.distro_iso_dir}",
         "Available distro:",
         join("\n", [for file in sort(fileset(local.iso_dir, "*")) : "  • ${file}"])
-      ]))
+      ])))
 
 /* TESTING: Enhanced variant
   _check_distro_iso_dir = can(fileset(local.distro_iso_dir, "*"))
@@ -70,13 +70,13 @@ locals {
       ]))
 */
 
-  _check_iso_path = fileexists(local.iso_path)
+  _check_iso_path = (fileexists(local.iso_path)
     ? true
     : error(join("\n", [
         "ISO image not found: ${local.iso_path}",
         "Available ISO:",
         join("\n", [for file in sort(fileset(local.distro_iso_dir, "*")) : "  • ${file}"])
-      ]))
+      ])))
 
 /* TESTING: Enhanced variant
   _check_iso_path = fileexists(local.iso_path)
@@ -93,7 +93,7 @@ locals {
       ]))
 */
 
-  _check_artifacts_dir = can(fileset(local.artifacts_dir, "*"))
+  _check_artifacts_dir = (can(fileset(local.artifacts_dir, "*"))
     ? true
-    : error("Artifacts directory not found: ${local.artifacts_dir}")
+    : error("Artifacts directory not found: ${local.artifacts_dir}"))
 }
