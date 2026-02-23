@@ -1,2 +1,7 @@
 **/iso/
 build.cmd
+**/secrets/
+**/run.sh
+**/preseed*.cfg
+**/packer*.exe
+**/alse18*/
