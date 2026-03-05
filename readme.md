@@ -274,3 +274,81 @@ Please open an issue or submit a pull request.
 ## License
 
 MIT License.
+
+---
+
+Пометки:
+
+- расписать что значит universal в названиях (это значит общий шаблон);
+├── builds
+│   ├── alse18-universal-qemu
+│   ├── debian-qemu
+│   ├── universal
+│   └── universal-qemu
+
+- расписать правила именования в iso дирректории (название дирректории = названию дистрибутива + версия);
+├── iso
+│   ├── alse
+│   │   └── alse-1.8.1.iso
+│   ├── debian
+│   │   └── debian-13.1.0.iso
+│   └── ubuntu
+│       └── ubuntu-24.04.3.iso
+
+
+Версионность
+
+Будет 5 “идентификатора”:
+- distro: alse (Astra), debian, ubuntu
+- distro_version: версия ISO/дистрибутива (например 1.8.4, 12.5, 24.10)
+- image_version: версия твоего образа (SemVer: MAJOR.MINOR.PATCH, например 1.0.3)
+- build_id: уникальность билда (CI pipeline id + sha или timestamp)
+- provider: qemu, virtualbox etc.
+
+Главное правило:
+- distro_version меняется, когда меняется ISO
+- image_version меняется, когда меняешь preseed/ansible/packer (поведение образа)
+- build_id меняется всегда при каждом запуске (чтобы артефакты копились и не затирались)
+
+<comment>-<flavor>-<distro>-<distro_version>-<provider>-<image_version>+<build_id>
+
+build_id правильно (локально + GitLab)
+
+run.sh
+build_id="$(date +%Y%m%d-%H%M)-$(git rev-parse --short HEAD 2>/dev/null || echo manual)"
+
+GitLab CI
+build_id="${CI_PIPELINE_ID}-${CI_COMMIT_SHORT_SHA}"
+
+builds/
+  alse/
+    universal-qemu/
+      http/
+        preseed/
+          base.cfg
+          flavors/
+            arm.cfg
+            arm-2.cfg
+            srv.cfg
+      ansible/
+        site.yml
+        group_vars/
+          all.yml
+          arm.yml
+          arm-2.yml
+          srv.yml
+        roles/
+          common/
+          arm/
+          srv/
+      packer/
+        source.pkr.hcl
+        locals.pkr.hcl
+        variables.pkr.hcl
+        build.pkr.hcl
+      run.sh
+
+И в boot_command ты просто выбираешь entrypoint:
+preseed/url=http://{{.HTTPIP}}:{{.HTTPPort}}/entrypoints/arm.cfg
+
+

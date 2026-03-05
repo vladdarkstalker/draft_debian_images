@@ -12,8 +12,8 @@
   Source: https://www.packer.io/docs/templates/hcl_templates/blocks/build
 */
 build {
-  name    = "universal-qemu"
-  sources = ["source.qemu.universal-qemu"]
+  name    = "universal"
+  sources = ["source.qemu.universal"]
 
   /*
     Shell provisioner — runs commands inside the VM via SSH.
@@ -26,9 +26,10 @@ build {
   */
   provisioner "shell" {
     inline = [
-      "echo Build ${var.distro} ${var.version}",
+      "echo Build ${var.distro} ${var.distro_version}",
       "uname -a",
       "id",
     ]
   }
 }
+

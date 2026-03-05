@@ -1,7 +1,14 @@
 **/iso/
 build.cmd
 **/secrets/
-**/run.sh
+**/run*.sh
 **/preseed*.cfg
 **/packer*.exe
 **/alse18*/
+**/packages*
+**/postIntsall*
+alse/
+/packages
+/postIntsall.sh
+/artifacts/
+

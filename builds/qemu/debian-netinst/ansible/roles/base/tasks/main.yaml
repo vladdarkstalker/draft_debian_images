@@ -1,0 +1,4 @@
+- name: Install base packages
+  include_role:
+    name: packages
+    

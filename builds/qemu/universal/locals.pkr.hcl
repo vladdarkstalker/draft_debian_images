@@ -1,11 +1,13 @@
 /*
-  QUICK LOCAL's REVIEW
+  LOCALS OVERVIEW
 
-  project_root   Project root directory
-  http_dir       Path for provisioning files (served by Packer HTTP)
-  build_dir      Build target directory (e.g., astra-arm, debian-srv)
-  iso_path       Full path to the distribution ISO
-  artifacts_dir  Artifacts output directory
+  This file calculates paths and names derived from user variables.
+
+  Key outputs used by the source:
+  - local.http_dir        directory served by Packer HTTP server
+  - local.iso_path        ISO file path
+  - local.artifact_name   artifact naming convention (your requested format)
+  - local.artifacts_dir   output_directory for QEMU builder (MUST NOT exist!)
 */
 
 # Computed paths
@@ -29,6 +31,9 @@ locals {
   */
   builds_root = "${var.project_root}/builds"
 
+  /**/
+  providers_dir = "${local.builds_root}/${var.provider}"
+
   /*
     The directory specific to the current build target.
     Constructed as <builds_root>/<var.build>.
@@ -36,17 +41,17 @@ locals {
     Type: string
     Source: https://www.packer.io/docs/templates/hcl_templates/locals
   */
-  build_dir = "${local.builds_root}/${var.build}"
+  distro_dir = "${local.providers_dir}/${var.distro}"
 
   /*
     The directory containing HTTP-serving files for the current build.
     Typically holds preseed.cfg, late_command scripts, etc.
-    Constructed as <build_dir>/http.
+    Constructed as <distro_dir>/http.
 
     Type: string
     Source: https://www.packer.io/docs/templates/hcl_templates/locals
   */
-  http_dir = "${local.build_dir}/http"
+  http_dir = "${local.distro_dir}/http"
 
   /*
     Base directory for ISO files. Passed through from var.iso_dir.
@@ -72,7 +77,7 @@ locals {
     Type: string
     Source: https://www.packer.io/docs/templates/hcl_templates/locals
   */
-  iso_filename = "${var.distro}-${var.version}.iso"
+  iso_filename = "${var.distro}-${var.distro_version}.iso"
 
   /*
     Full absolute path to the ISO image.
@@ -91,6 +96,9 @@ locals {
     Source: https://www.packer.io/docs/templates/hcl_templates/locals
   */
   artifacts_dir = var.artifacts_dir
+
+  /**/
+  artifact_name = "${var.comment}${var.flavor}-${var.distro}-${var.distro_version}-${var.provider}-${local.image_version}-${var.build_id}"
 }
 
 # Validations with errors
@@ -98,7 +106,7 @@ locals {
 locals {
 
   /*
-    Проверяет существование директории сборки (build_dir).
+    Проверяет существование провайдера (provider_dir).
     Использует fileset для проверки доступности; в случае ошибки вызывает error
     с сообщением, останавливающим сборку.
 
@@ -106,10 +114,25 @@ locals {
     Source: https://www.packer.io/docs/templates/hcl_templates/functions/file/fileset
     Source: https://developer.hashicorp.com/packer/docs/templates/hcl_templates/functions
   */
-  _check_build_dir = (
-    can(fileset(local.build_dir, "*"))
+  _check_providers_dir = (
+    can(fileset(local.providers_dir, "*"))
     ? true
-    : error("Build directory not found: ${local.build_dir}")
+    : error("Providers directory not found: ${local.providers_dir}")
+  )
+
+  /*
+    Проверяет существование директории сборки (distro_dir).
+    Использует fileset для проверки доступности; в случае ошибки вызывает error
+    с сообщением, останавливающим сборку.
+
+    Type: (internal validation) bool
+    Source: https://www.packer.io/docs/templates/hcl_templates/functions/file/fileset
+    Source: https://developer.hashicorp.com/packer/docs/templates/hcl_templates/functions
+  */
+  _check_distro_dir = (
+    can(fileset(local.distro_dir, "*"))
+    ? true
+    : error("Distro directory not found: ${local.distro_dir}")
   )
 
   /*

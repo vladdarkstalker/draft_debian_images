@@ -1,5 +1,5 @@
-# Basic Base Source ALSE18
-source "qemu" "universal-qemu" {
+# Basic Base Source
+source "qemu" "universal" {
 
 /*
   This is the name of the image (QCOW2 or IMG) file for the new virtual machine.
@@ -7,7 +7,7 @@ source "qemu" "universal-qemu" {
   Type: string
   Source: https://www.packer.io/plugins/builders/qemu
 */
-  vm_name = "universal-qemu"
+  vm_name = local.artifact_name
 
 /*
   A URL to the ISO containing the installation image or virtual hard drive (VHD or VHDX) file to clone.
@@ -40,7 +40,7 @@ source "qemu" "universal-qemu" {
   Type: int (megabytes)
   Source: https://www.packer.io/plugins/builders/qemu
 */
-  memory = 4096
+  memory = 8192
 
 /*
   The number of CPUs to use for the VM.
@@ -48,7 +48,7 @@ source "qemu" "universal-qemu" {
   Type: int
   Source: https://www.packer.io/plugins/builders/qemu
 */
-  cpus = 2
+  cpus = 4
 
 /*
   The format of the output image. 
@@ -93,7 +93,7 @@ source "qemu" "universal-qemu" {
   Type: string
   Source: https://www.packer.io/plugins/builders/qemu
 */
-  # accelerator = "tcg"
+# accelerator = "kvm"
 
 /*
   The directory where the final VM image will be stored.
@@ -101,7 +101,7 @@ source "qemu" "universal-qemu" {
   Type: string
   Source: https://www.packer.io/plugins/builders/qemu
 */
-  output_directory = local.artifacts_dir
+  output_directory = "${local.artifacts_dir}/${var.distro}-${var.distro_version}"
 
 /*
   The directory from which files will be served by Packer's internal HTTP server.
@@ -129,9 +129,7 @@ source "qemu" "universal-qemu" {
   Type: list(list(string))
   Source: https://www.packer.io/plugins/builders/qemu
 */
-  qemuargs = [
-    ["-boot", "menu=on,splash-time=8000,strict=on"]
-  ]
+  qemuargs = []
 
 /*
   A list of keystrokes to send to the VM to control the OS installer.
@@ -157,13 +155,7 @@ source "qemu" "universal-qemu" {
   Type: list(string)
   Source: https://www.packer.io/plugins/builders/qemu#boot_command
 */
-boot_command = [
-  "<leftShiftOn><wait10><leftShiftOff>",
-  "e<wait>",
-  "<down><down><end>",
-  " <kernel_parameters> auto=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg",
-  "<f10>"
-]
+  boot_command = []
 
 /*
   The username used to connect to the VM via SSH after the OS is installed.
@@ -188,14 +180,14 @@ boot_command = [
   Type: string
   Source: https://www.packer.io/plugins/builders/qemu
 */
-  shutdown_command = "echo 'packer' | sudo -S shutdown -P now"
+  shutdown_command = "echo '${var.ssh_password}' | sudo -S -p '' /sbin/shutdown -P now"
 
 /*
   The maximum time to wait for SSH to become available.
-  Example: "90m" (90 minutes).
+  Example: "20m" (20 minutes).
 
   Type: string (duration)
   Source: https://www.packer.io/plugins/builders/qemu
 */
-  ssh_timeout = "20m"
+  ssh_timeout = "30m"
 }
